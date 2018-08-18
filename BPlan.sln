@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BPlan-server", "BPlan-server\BPlan-server.vcxproj", "{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}.Debug|x64.ActiveCfg = Debug|x64
+		{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}.Debug|x64.Build.0 = Debug|x64
+		{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}.Debug|x86.ActiveCfg = Debug|x64
+		{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}.Debug|x86.Build.0 = Debug|x64
+		{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}.Release|x64.ActiveCfg = Debug|x64
+		{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}.Release|x64.Build.0 = Debug|x64
+		{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}.Release|x86.ActiveCfg = Debug|x64
+		{C168AC0C-80D1-45BD-BF26-E27FAE2178B3}.Release|x86.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04BD147B-E329-44A8-8F1A-78DDA770F82F}
+	EndGlobalSection
+EndGlobal
