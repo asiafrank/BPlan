@@ -3,7 +3,7 @@
 
 /*--------- outside definition ----------*/
 
-wstring StringNode::getValue()
+string StringNode::getValue()
 {
     if (collected)
         return value;
@@ -12,19 +12,19 @@ wstring StringNode::getValue()
 
     // collect data
     // get string length
-    wostringstream wss;
+    ostringstream ss;
     for (;; ++it)
     {
         checkEnd();
-        wchar_t c = *it;
+        char c = *it;
         if (c == ':')
             break;
-        wss << c;
+        ss << c;
     }
 
-    length = stoi(wss.str());
-    wss.clear();
-    wss.str(L"");
+    length = stoi(ss.str());
+    ss.clear();
+    ss.str("");
 
     // get string content
     for (size_t i = 0; i < length; ++i)
@@ -32,15 +32,15 @@ wstring StringNode::getValue()
         ++it; // when i = 0, skip ':'; when i == length, not iterate next.
 
         checkEnd();
-        wss << *it;
+        ss << *it;
     }
 
-    value = wss.str();
+    value = ss.str();
     collected = true;
     return value;
 }
 
-wstring IntegerNode::getValue()
+string IntegerNode::getValue()
 {
     if (collected)
         return value;
@@ -49,24 +49,24 @@ wstring IntegerNode::getValue()
     ++it; // skip 'i'
 
     // collect data
-    wostringstream wss;
+    ostringstream ss;
     for (;; ++it)
     {
         checkEnd();
-        wchar_t c = *it;
+        char c = *it;
         if (c == 'e') // int end
             break;
-        wss << c;
+        ss << c;
     }
 
-    value = wss.str();
+    value = ss.str();
     intValue = stoi(value);
     collected = true;
     return value;
 }
 
 // 如果 Children 是 ListNode 或 DictNode 则相当于递归
-wstring ListNode::getValue()
+string ListNode::getValue()
 {
     if (collected)
         return value;
@@ -75,13 +75,13 @@ wstring ListNode::getValue()
     ++it; // skip 'l'
 
     // collect data
-    wostringstream wss;
-    wss << L"[";
+    ostringstream ss;
+    ss << "[";
 
     for (;; ++it)
     {
         checkEnd();
-        wchar_t c = *it;
+        char c = *it;
         if (c == 'e') // list end
             break;
 
@@ -91,21 +91,21 @@ wstring ListNode::getValue()
         {
             shared_ptr<IntegerNode> pIntNode = make_shared<IntegerNode>(pctx);
             addChild(pIntNode);
-            wss << pIntNode->getValue() << L",";
+            ss << pIntNode->getValue() << ",";
         }
         break;
         case 'l': // list
         {
             shared_ptr<ListNode> pListNode = make_shared<ListNode>(pctx);
             addChild(pListNode);
-            wss << pListNode->getValue() << L",";
+            ss << pListNode->getValue() << ",";
         }
         break;
         case 'd': // dict
         {
             shared_ptr<DictNode> pDictNode = make_shared<DictNode>(pctx);
             addChild(pDictNode);
-            wss << pDictNode->getValue() << L",";
+            ss << pDictNode->getValue() << ",";
         }
         break;
         default:  // string
@@ -114,7 +114,7 @@ wstring ListNode::getValue()
             {
                 shared_ptr<StringNode> pStrNode = make_shared<StringNode>(pctx);
                 addChild(pStrNode);
-                wss << L"\"" << pStrNode->getValue() << L"\",";
+                ss << "\"" << pStrNode->getValue() << "\",";
             }
             else
             {
@@ -126,15 +126,15 @@ wstring ListNode::getValue()
     }
 
     // replace last ',' to ']'
-    wss.seekp(-1, wss.cur);
-    wss << L"]";
-    value = wss.str();
+    ss.seekp(-1, ss.cur);
+    ss << "]";
+    value = ss.str();
     collected = true;
     return value;
 }
 
 // 如果 Children 包含 ListNode 或 DictNode 则递归
-wstring DictNode::getValue()
+string DictNode::getValue()
 {
     if (collected)
         return value;
@@ -142,20 +142,20 @@ wstring DictNode::getValue()
     auto& it = pctx->getCurrentIterator();
     ++it; // skip 'd'
 
-    wostringstream wss;
-    wss << L"{";
+    ostringstream ss;
+    ss << "{";
 
     for (;; ++it)
     {
         checkEnd();
-        wchar_t c = *it;
+        char c = *it;
         if (c == 'e') // dict end
             break;
 
         // get key
         shared_ptr<StringNode> pKeyNode = make_shared<StringNode>(pctx);
-        wstring key = pKeyNode->getValue();
-        wss << L"\"" << key << L"\":";
+        string key = pKeyNode->getValue();
+        ss << "\"" << key << "\":";
 
         // get value
         checkEnd();
@@ -170,9 +170,9 @@ wstring DictNode::getValue()
         {
             shared_ptr<IntegerNode> pIntNode = make_shared<IntegerNode>(pctx);
             addChild(pIntNode);
-            wstring ws = pIntNode->getValue(); // 先调用 getValue 才能放入 dict 中
+            string ws = pIntNode->getValue(); // 先调用 getValue 才能放入 dict 中
             dict[pKeyNode] = pIntNode;
-            wss << ws << L",";
+            ss << ws << ",";
         }
         break;
         case 'l': // list
@@ -180,7 +180,7 @@ wstring DictNode::getValue()
             shared_ptr<ListNode> pListNode = make_shared<ListNode>(pctx);
             addChild(pListNode);
             dict[pKeyNode] = pListNode;
-            wss << pListNode->getValue() << L",";
+            ss << pListNode->getValue() << ",";
         }
         break;
         case 'd': // dict
@@ -188,7 +188,7 @@ wstring DictNode::getValue()
             shared_ptr<DictNode> pDictNode = make_shared<DictNode>(pctx);
             addChild(pDictNode);
             dict[pKeyNode] = pDictNode;
-            wss << pDictNode->getValue() << L",";
+            ss << pDictNode->getValue() << ",";
         }
         break;
         default:  // string
@@ -198,7 +198,7 @@ wstring DictNode::getValue()
                 shared_ptr<StringNode> pStrNode = make_shared<StringNode>(pctx);
                 addChild(pStrNode);
                 dict[pKeyNode] = pStrNode;
-                wss << L"\"" << pStrNode->getValue() << L"\",";
+                ss << "\"" << pStrNode->getValue() << "\",";
             }
             else
             {
@@ -210,23 +210,23 @@ wstring DictNode::getValue()
     }
 
     // replace last ',' to '}'
-    wss.seekp(-1, wss.cur);
-    wss << L"}";
-    value = wss.str();
+    ss.seekp(-1, ss.cur);
+    ss << "}";
+    value = ss.str();
     collected = true;
     return value;
 }
 
-void bdecode(wstring str)
+void bdecode(string str)
 {
     if (str.empty())
         return;
 
-    shared_ptr<wstring> pstr = make_shared<wstring>(str);
+    shared_ptr<string> pstr = make_shared<string>(str);
     shared_ptr<Context> pctx = make_shared<Context>(pstr);
 
     shared_ptr<Node> proot;
-    wchar_t first = *(pctx->getCurrentIterator());
+    char first = *(pctx->getCurrentIterator());
     switch (first)
     {
     case 'i': // integer
@@ -258,6 +258,6 @@ void bdecode(wstring str)
     break;
     }
 
-    wstring result = proot->getValue();
-    wcout << result << endl;
+    string result = proot->getValue();
+    cout << result << endl;
 }

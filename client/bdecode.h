@@ -87,20 +87,20 @@ enum NodeType
 class Context
 {
 public:
-    Context(shared_ptr<wstring> data) : data(data),
+    Context(shared_ptr<string> data) : data(data),
         currIt(data->cbegin()),
         end(data->cend())
     {}
 
-    wstring::const_iterator& getCurrentIterator()
+    string::const_iterator& getCurrentIterator()
     { return currIt; }
 
-    const wstring::const_iterator& getEndIterator()
+    const string::const_iterator& getEndIterator()
     { return end; }
 private:
-    shared_ptr<wstring> data;
-    wstring::const_iterator currIt;
-    const wstring::const_iterator end;
+    shared_ptr<string> data;
+    string::const_iterator currIt;
+    const string::const_iterator end;
 };
 
 /*
@@ -124,12 +124,12 @@ public:
             throw exception("ERROR: iterate end before get value complete");
     };
 
-    virtual wstring getValue() { return value; };
+    virtual string getValue() { return value; };
 protected:
     shared_ptr<Context> pctx;
     NodeType type;
     vector<shared_ptr<Node>> children;
-    wstring value;
+    string value;
 };
 
 /* T_String µÄ Node */
@@ -140,7 +140,7 @@ public:
         : Node(pctx, T_String), length(0), collected(false)
     {}
 
-    virtual wstring getValue() override;
+    virtual string getValue() override;
 
     // for unordered_map
     bool operator==(const StringNode& rhs) const {
@@ -164,7 +164,7 @@ struct StringNodeHash
 {
     std::size_t operator()(const shared_ptr<StringNode>& p) const noexcept
     {
-        return hash<wstring>{}(p->getValue());
+        return hash<string>{}(p->getValue());
     }
 };
 
@@ -176,7 +176,7 @@ public:
         : Node(pctx, T_Integer), collected(false), intValue(0)
     {}
 
-    virtual wstring getValue() override;
+    virtual string getValue() override;
 
     int getInt()
     {
@@ -199,7 +199,7 @@ public:
         : Node(pctx, T_List), collected(false)
     {}
 
-    virtual wstring getValue() override;
+    virtual string getValue() override;
 private:
     bool collected;
 };
@@ -212,10 +212,10 @@ public:
         : Node(pctx, T_Dict), collected(false)
     {}
 
-    virtual wstring getValue() override;
+    virtual string getValue() override;
 private:
     bool collected;
     unordered_map<shared_ptr<StringNode>, shared_ptr<Node>, StringNodeHash, StringNodePtrEq> dict;
 };
 
-void bdecode(wstring str);
+void bdecode(string str);
