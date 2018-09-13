@@ -1,11 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <sstream>
-#include <iostream>
-#include <unordered_map>
-
 /*
 数据类型
 
@@ -70,7 +64,16 @@
             +-----+                    +-----+
 
 其中 DictNode 中 Entry 自己也能构成一棵树
+
+详情见 https://wiki.theory.org/index.php/BitTorrentSpecification#Bencoding
 */
+
+#include <memory>
+#include <vector>
+#include <sstream>
+#include <iostream>
+#include <unordered_map>
+
 using namespace std;
 
 enum NodeType
@@ -116,6 +119,8 @@ public:
     {}
 
     NodeType getType() { return type; };
+
+    const vector<shared_ptr<Node>>& getChildren() { return children; };
     void addChild(shared_ptr<Node> pnode) { children.push_back(pnode); };
     bool leaf() { return children.empty(); };
     void checkEnd()
@@ -129,7 +134,7 @@ protected:
     shared_ptr<Context> pctx;
     NodeType type;
     vector<shared_ptr<Node>> children;
-    string value;
+    string value; // TODO: 将 formatted string 和 raw string 分开处理
 };
 
 /* T_String 的 Node */
@@ -148,9 +153,10 @@ public:
     }
 private:
     bool collected; // 是否已经收集过数据
-    size_t length;
+    uint64_t length;
 };
 
+// currently no usage
 struct StringNodePtrEq
 {
     bool operator()(const shared_ptr<StringNode>& lhs,
@@ -160,6 +166,7 @@ struct StringNodePtrEq
     }
 };
 
+// currently no usage
 struct StringNodeHash
 {
     std::size_t operator()(const shared_ptr<StringNode>& p) const noexcept
@@ -178,15 +185,14 @@ public:
 
     virtual string getValue() override;
 
-    int getInt()
+    int64_t getInt()
     {
         return intValue;
     }
 private:
     bool collected;
-    int intValue;
+    int64_t intValue;
 };
-
 
 // 前置声明
 class DictNode;
@@ -213,9 +219,25 @@ public:
     {}
 
     virtual string getValue() override;
+
+    shared_ptr<Node> findNode(string key);
 private:
     bool collected;
-    unordered_map<shared_ptr<StringNode>, shared_ptr<Node>, StringNodeHash, StringNodePtrEq> dict;
+    unordered_map<string, shared_ptr<Node>> dict;
 };
 
-void bdecode(string str);
+/*
+解析B编码的文本内容
+content: B编码的文本内容，不能为空字符串
+return shared_ptr<Node>, 树根
+throw exception: 当解析到不正确的字符时抛出错误
+*/
+shared_ptr<Node> bdecode(const string& content);
+
+
+typedef shared_ptr<Context> PContext;
+typedef shared_ptr<Node> PNode;
+typedef shared_ptr<StringNode> PSNode;
+typedef shared_ptr<IntegerNode> PINode;
+typedef shared_ptr<ListNode> PLNode;
+typedef shared_ptr<DictNode> PDNode;

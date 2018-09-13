@@ -22,7 +22,7 @@ string StringNode::getValue()
         ss << c;
     }
 
-    length = stoi(ss.str());
+    length = stoull(ss.str());
     ss.clear();
     ss.str("");
 
@@ -60,7 +60,7 @@ string IntegerNode::getValue()
     }
 
     value = ss.str();
-    intValue = stoi(value);
+    intValue = stoull(value);
     collected = true;
     return value;
 }
@@ -156,6 +156,7 @@ string DictNode::getValue()
         shared_ptr<StringNode> pKeyNode = make_shared<StringNode>(pctx);
         string key = pKeyNode->getValue();
         ss << "\"" << key << "\":";
+        pKeyNode = nullptr; // release StringNode obj
 
         // get value
         checkEnd();
@@ -171,7 +172,7 @@ string DictNode::getValue()
             shared_ptr<IntegerNode> pIntNode = make_shared<IntegerNode>(pctx);
             addChild(pIntNode);
             string ws = pIntNode->getValue(); // 先调用 getValue 才能放入 dict 中
-            dict[pKeyNode] = pIntNode;
+            dict[key] = pIntNode;
             ss << ws << ",";
         }
         break;
@@ -179,7 +180,7 @@ string DictNode::getValue()
         {
             shared_ptr<ListNode> pListNode = make_shared<ListNode>(pctx);
             addChild(pListNode);
-            dict[pKeyNode] = pListNode;
+            dict[key] = pListNode;
             ss << pListNode->getValue() << ",";
         }
         break;
@@ -187,7 +188,7 @@ string DictNode::getValue()
         {
             shared_ptr<DictNode> pDictNode = make_shared<DictNode>(pctx);
             addChild(pDictNode);
-            dict[pKeyNode] = pDictNode;
+            dict[key] = pDictNode;
             ss << pDictNode->getValue() << ",";
         }
         break;
@@ -197,7 +198,7 @@ string DictNode::getValue()
             {
                 shared_ptr<StringNode> pStrNode = make_shared<StringNode>(pctx);
                 addChild(pStrNode);
-                dict[pKeyNode] = pStrNode;
+                dict[key] = pStrNode;
                 ss << "\"" << pStrNode->getValue() << "\",";
             }
             else
@@ -209,7 +210,7 @@ string DictNode::getValue()
         }
     }
 
-    // replace last ',' to '}'
+    // replace last ',' with '}'
     ss.seekp(-1, ss.cur);
     ss << "}";
     value = ss.str();
@@ -217,15 +218,17 @@ string DictNode::getValue()
     return value;
 }
 
-void bdecode(string str)
+shared_ptr<Node> DictNode::findNode(string key)
 {
-    if (str.empty())
-        return;
+    return dict[key];
+}
 
-    shared_ptr<string> pstr = make_shared<string>(str);
-    shared_ptr<Context> pctx = make_shared<Context>(pstr);
+shared_ptr<Node> bdecode(const string& content)
+{
+    shared_ptr<string> pcontent = make_shared<string>(content);
+    shared_ptr<Context> pctx = make_shared<Context>(pcontent);
 
-    shared_ptr<Node> proot;
+    std::shared_ptr<Node> proot;
     char first = *(pctx->getCurrentIterator());
     switch (first)
     {
@@ -258,6 +261,6 @@ void bdecode(string str)
     break;
     }
 
-    string result = proot->getValue();
-    cout << result << endl;
+    proot->getValue(); // invoke content decode chain, ignore return
+    return proot;
 }
