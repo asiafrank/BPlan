@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "../client/bdecode.h"
+#include "../client/TorrentInfo.h"
 
 /*
 add library
@@ -25,4 +26,16 @@ namespace test
             Assert::AreEqual(expect, rootValue);
 		}
 	};
+
+    TEST_CLASS(TorrentInfo)
+    {
+    public:
+        TEST_METHOD(TestToReadableHex)
+        {
+            std::ostringstream oss;
+            oss << readable_base16_high('h') << readable_base16_low('h');
+            oss << readable_base16_high('l') << readable_base16_low('l');
+            Assert::AreEqual(std::string("686C"), oss.str());
+        }
+    };
 }

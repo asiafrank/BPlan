@@ -3,16 +3,12 @@
 #include "bdecode.h"
 #include <fstream>
 
-char readable_base16_high(char c);
-char readable_base16_low(char c);
-char readable_base16(char c);
-
 const std::vector<std::string>& TorrentInfo::getHumanReadablePiecesSHA1()
 {
     if (!pieces_h.empty())
         return pieces_h;
 
-    string buf;
+    ostringstream buf;
     size_t count = 1;
     string::const_iterator it = pieces.cbegin();
     string::const_iterator end = pieces.cend();
@@ -23,13 +19,14 @@ const std::vector<std::string>& TorrentInfo::getHumanReadablePiecesSHA1()
         // big-endian
         char high = readable_base16_high(c); // 取高位转成 char
         char low = readable_base16_low(c);  // 取低位转成 char
-        buf.push_back(high);
-        buf.push_back(low);
+        buf << high;
+        buf << low;
         if (count == 20)
         {
             count = 0;
-            pieces_h.push_back(buf);
+            pieces_h.push_back(buf.str());
             buf.clear();
+            buf.str("");
         }
     }
     return pieces_h;

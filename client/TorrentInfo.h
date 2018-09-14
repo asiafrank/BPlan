@@ -175,3 +175,6 @@ private:
 };
 
 
+char readable_base16_high(char c);
+char readable_base16_low(char c);
+char readable_base16(char c);
