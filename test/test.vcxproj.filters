@@ -21,30 +21,12 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bdecode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TorrentInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="iostream.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="bdecode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TorrentInfo.cpp">
+    <ClCompile Include="unittest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

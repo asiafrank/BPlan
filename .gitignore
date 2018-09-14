@@ -77,7 +77,7 @@ path to the Lib folder
 *.gz
 
 # packages
-/cpp/test/d3d/packages
+/packages
 
 # white list
 !java/jna/jni-example/src/main/resources/*

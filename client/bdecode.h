@@ -68,6 +68,7 @@
 ÏêÇé¼û https://wiki.theory.org/index.php/BitTorrentSpecification#Bencoding
 */
 
+#include "stdafx.h"
 #include <memory>
 #include <vector>
 #include <sstream>
