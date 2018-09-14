@@ -14,6 +14,7 @@
 ## Dependencies
 - [asio](https://think-async.com/Asio)
 - [nowide](https://github.com/nephatrine/nowide-standalone)
+- [spdlog](https://github.com/gabime/spdlog)
 
 
 ## References

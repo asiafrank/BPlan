@@ -7,6 +7,8 @@
 //
 // Note: does all pointer-math in DWORD, assumes no overflows.
 
+#include "stdafx.h"
+
 #define NOWIDE_SOURCE
 #include <nowide/iostream.hpp>
 #include <nowide/convert.hpp>
