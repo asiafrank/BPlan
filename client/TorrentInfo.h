@@ -52,129 +52,136 @@ test_file/sample.torrent 为例：
 #include <string>
 #include <vector>
 
-// 前置声明
-class TorrentInfo;
+namespace bplan
+{
+    // 前置声明
+    class TorrentInfo;
 
-/*
-解析 .torrent 文件，返回 TorrentInfo 对象
+    /*
+    解析 .torrent 文件，返回 TorrentInfo 对象
 
-filename: 文件名，绝对路径或者相对路径，如 "../test_file/sample.torrent"
+    filename: 文件名，绝对路径或者相对路径，如 "../test_file/sample.torrent"
 
-return shared_ptr<TorrentInfo>, 如果 if 判断为 false 则表示解析失败
-Example:
-shared_ptr<TorrentInfo> pInfo = decode_to_torrent_info("sample.torrent");
-if (pInfo)
+    return shared_ptr<TorrentInfo>, 如果 if 判断为 false 则表示解析失败
+    Example:
+    shared_ptr<TorrentInfo> pInfo = decode_to_torrent_info("sample.torrent");
+    if (pInfo)
     cout << "decode success" << endl;
-else
+    else
     cout << "decode failed" << endl;
-*/
-std::shared_ptr<TorrentInfo> makeTorrentInfo(const std::string& filename);
-
-enum FileMode
-{
-    None = 0, // 还没解析的时候，判断为 None
-    Single,   // 单文件模式
-    Multi     // 多文件模式
-};
-
-/*
-FileMode = Multi 时, TorrentInfo 中的文件列表对象
-*/
-class TFile
-{
-    friend std::shared_ptr<TorrentInfo> makeTorrentInfo(const std::string& filename);
-public: 
-    const std::uint64_t& getLength() { return length; };
-    const std::vector<std::string>& getPath() { return path; };
-    const std::string& getMD5sum() { return md5sum; };
-private:
-    std::uint64_t length;
-    std::vector<std::string> path; // ["dir1", "dir2", "file.ext"] 代表 "dir1/dir2/file.ext", 
-                                   // B编码为 "l4:dir14:dir28:file.exte"
-    std::string md5sum;   // optional, 32-character hexadecimal string
-};
-
-class TorrentInfo
-{
-    friend std::shared_ptr<TorrentInfo> makeTorrentInfo(const std::string& filename);
-public:
-    /*
-    throw exception when decode failed
     */
-    TorrentInfo() {};
-    ~TorrentInfo() {};
-public:
-    const FileMode getMode() const { return mode; };
-    const std::string& getAnnounce() const { return announce; };
-    const std::vector<std::vector<std::string>>& getAnnounceList() const { return announceList; };
-    const std::uint64_t& getCreationDate() const { return creationDate; };
-    const std::string& getComment() const { return comment; };
-    const std::string& getCreatedBy() const { return createdBy; };
-    const std::string& getEncoding() const { return encoding; };
+    std::shared_ptr<TorrentInfo> makeTorrentInfo(const std::string& filename);
 
-    const std::uint64_t& getPieceLength() const { return pieceLength; };
-    const std::string& getPieces() const { return pieces; };
-    const std::size_t& getPrivate() const { return xprivate; };
+    enum FileMode
+    {
+        None = 0, // 还没解析的时候，判断为 None
+        Single,   // 单文件模式
+        Multi     // 多文件模式
+    };
 
-    const std::string& getName() const { return name; };
-    const std::uint64_t& getLength() const { return length; };
-    const std::string& getMD5sum() const { return md5sum; };
-    const std::vector<TFile>& getFiles() const { return files; };
-
-    /* 将 20-byte SHA1 串转换成可读的形式 */
-    const std::vector<std::string>& getHumanReadablePiecesSHA1();
     /*
-    将各属性的值收集成 str，方便打印。格式如下：
-    announce: ""
-    announce-list: [
-      [""],
-      [""]
-    ]
-    comment: ""
-    created by: ""
-    creation date: 10000
-    info:
+    FileMode = Multi 时, TorrentInfo 中的文件列表对象
+    */
+    class TFile
+    {
+        friend std::shared_ptr<TorrentInfo> makeTorrentInfo(const std::string& filename);
+    public:
+        const std::uint64_t& getLength() { return length; };
+        const std::vector<std::string>& getPath() { return path; };
+        const std::string& getMD5sum() { return md5sum; };
+    private:
+        std::uint64_t length;
+        std::vector<std::string> path; // ["dir1", "dir2", "file.ext"] 代表 "dir1/dir2/file.ext", 
+                                       // B编码为 "l4:dir14:dir28:file.exte"
+        std::string md5sum;   // optional, 32-character hexadecimal string
+    };
+
+    class TorrentInfo
+    {
+        friend std::shared_ptr<TorrentInfo> makeTorrentInfo(const std::string& filename);
+    public:
+        /*
+        throw exception when decode failed
+        */
+        TorrentInfo() {};
+        ~TorrentInfo() {};
+    public:
+        const FileMode getMode() const { return mode; };
+        const std::string& getAnnounce() const { return announce; };
+        const std::vector<std::vector<std::string>>& getAnnounceList() const { return announceList; };
+        const std::uint64_t& getCreationDate() const { return creationDate; };
+        const std::string& getComment() const { return comment; };
+        const std::string& getCreatedBy() const { return createdBy; };
+        const std::string& getEncoding() const { return encoding; };
+
+        const std::string& getInfoSha1() const { return info_sha1; };
+        const std::string& getInfoSha1Hex() const { return info_sha1_hex; };
+        const std::uint64_t& getPieceLength() const { return pieceLength; };
+        const std::string& getPiecesRaw() const { return pieces_raw; };
+        const std::int64_t& getPrivate() const { return xprivate; };
+
+        const std::string& getName() const { return name; };
+        const std::uint64_t& getLength() const { return length; };
+        const std::string& getMD5sum() const { return md5sum; };
+        const std::vector<TFile>& getFiles() const { return files; };
+
+        /* 20-byte list of pieces_raw */
+        const std::vector<std::string>& getPieces();
+        /* 将 20-byte SHA1 串转换成可读的Hex形式 */
+        const std::vector<std::string>& getPiecesHex();
+        /*
+        将各属性的值收集成 str，方便打印。格式如下：
+        announce: ""
+        announce-list: [
+        [""],
+        [""]
+        ]
+        comment: ""
+        created by: ""
+        creation date: 10000
+        info:
+        info hash: ""
         name: ""
         piece length: 10000
         pieces: [
-          "",
-          ""
+        "",
+        ""
         ]
         files: [
-          {
-            "length": 1000,
-            "path": [""]
-          }
+        {
+        "length": 1000,
+        "path": [""]
+        }
         ]
-    */
-    const std::string& str();
-private:
-    FileMode mode;
-    std::string announce;
-    std::vector<std::vector<std::string>> announceList; // optional
-    std::uint64_t creationDate;            // optional, seconds since 1-Jan-1970 00:00:00 UTC
-    std::string comment;                   // optional
-    std::string createdBy;                 // optional
-    std::string encoding;                  // optional, TODO: 学习下这个什么用
-private:
-    // info 中的内容
-    std::uint64_t pieceLength; // number of bytes in each piece
-    std::string pieces;        // string consisting of the concatenation of all 20-byte SHA1 hash values, 
-                               // one per piece (byte string, i.e. not urlencoded)
-    std::vector<std::string> pieces_h; // human readable pieces code
-    std::size_t xprivate;      // "private": 0,1
-    
-    std::string name;          // 如果是 Single，则表示文件名；如果是 Multi，则表示文件夹名
-    
-    std::uint64_t length;      // Single, length of the file in bytes
-    std::string md5sum;        // Single, optional, 32-character hexadecimal string
+        */
+        const std::string& str();
+    private:
+        FileMode mode;
+        std::string announce;
+        std::vector<std::vector<std::string>> announceList; // optional
+        std::uint64_t creationDate;            // optional, seconds since 1-Jan-1970 00:00:00 UTC
+        std::string comment;                   // optional
+        std::string createdBy;                 // optional
+        std::string encoding;                  // optional, TODO: 学习下这个什么用
+    private:
+        std::string info_sha1;     // info 的 value 内容的 sha1 值，binary 形式
+        std::string info_sha1_hex; // info 的 value 内容的 sha1 值，hex 形式
 
-    std::vector<TFile> files;  // Multi, 文件列表
-private:
-    std::string collectedStr;
-};
+                                   // info 中的内容
+        std::uint64_t pieceLength; // number of bytes in each piece
+        std::string pieces_raw;        // string consisting of the concatenation of all 20-byte SHA1 hash values, 
+                                       // one per piece (byte string, i.e. not urlencoded)
+        std::vector<std::string> pieces;   // 20-byte list of pieces_raw
+        std::vector<std::string> pieces_hex; // hex pieces
+        std::int64_t xprivate;      // "private": 0,1
 
+        std::string name;          // 如果是 Single，则表示文件名；如果是 Multi，则表示文件夹名
 
-char readable_base16_high(char c);
-char readable_base16_low(char c);
-char readable_base16(char c);
+        std::uint64_t length;      // Single, length of the file in bytes
+        std::string md5sum;        // Single, optional, 32-character hexadecimal string
+
+        std::vector<TFile> files;  // Multi, 文件列表
+    private:
+        std::string formatedStr;
+    };
+} // namespace bplan
