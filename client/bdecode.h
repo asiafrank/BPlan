@@ -89,6 +89,8 @@ namespace bplan
         T_Dict
     };
 
+    // 为了和 encode 隔离，这里的 Context， Node 等都封装到 decode namespace 下
+
     /* 解析过程中的上下文 */
     class Context
     {

@@ -2,7 +2,9 @@
 尝试实现 bittorrent 协议。制作一个简单 GUI bt 下载器。只支持 win10。
 
 ## TODO List
+- [ ] 简单的追番表
 - [x] metainfo 文件解析
+- [ ] B 编码，encode 方法
 - [ ] 基本下载
 - [ ] Direct2D 做 GUI
 - [ ] DHT 支持

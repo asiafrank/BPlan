@@ -2,6 +2,7 @@
 
 #include <string>
 #include <tuple>
+#include <sstream>
 
 /*
 C++ 黑魔法，绕死人的变量参数
@@ -41,6 +42,6 @@ namespace bplan
     void thrExpt(Args... args)
     {
         std::string str = tuple_to_str(std::tie(args...));
-        throw exception(str.c_str());
+        throw std::exception(str.c_str());
     }
 } // namespace bplan
