@@ -19,6 +19,7 @@
 *.so
 *.so.*
 *.dylib
+*.pdb
 
 # Executables
 *.exe
@@ -80,5 +81,3 @@ path to the Lib folder
 /packages
 
 # white list
-!java/jna/jni-example/src/main/resources/*
-!java/netty-sample/src/main/resources/*

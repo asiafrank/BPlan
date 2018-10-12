@@ -1,5 +1,7 @@
-# BPlan
+# BPlan 
 尝试实现 bittorrent 协议。制作一个简单 GUI bt 下载器。只支持 win10。
+
+> 自己写的版本，不依赖，libtorrent
 
 ## TODO List
 - [x] metainfo 文件解析
